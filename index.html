@@ -1,153 +1,473 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MobiStore - Modern Mobile & Gadget Shop</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PK Gadget | Mobile Shop</title>
+  <meta name="description" content="PK Gadget - আপনার বিশ্বস্ত মোবাইল শপ। Samsung, Xiaomi, Vivo, Oppo, Realme ও iPhone।">
+  
+  <!-- Supabase & Tailwind -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --blue: #0757d5;
+      --green: #00b87c;
+      --dark: #0f172a;
+      --gray: #64748b;
+      --light: #f8fafc;
+      --white: #ffffff;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: Arial, "Noto Sans Bengali", sans-serif; background: var(--light); color: var(--dark); line-height: 1.6; }
+    a { text-decoration: none; color: inherit; }
+    .container { width: min(1120px, 92%); margin: auto; }
+    
+    header { background: rgba(255,255,255,0.95); border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+    .nav { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 800; }
+    .logo-mark { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; color: white; background: linear-gradient(135deg, var(--blue), var(--green)); }
+    nav a { font-weight: 600; color: #334155; margin-left: 20px; }
+    nav a:hover { color: var(--blue); }
+    
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 12px 24px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: .2s; }
+    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-blue { background: var(--blue); color: white; }
+    .btn-green { background: var(--green); color: white; }
+
+    /* Minimal Hero Section */
+    .hero { padding: 90px 0; text-align: center; background: radial-gradient(circle at 50% 20%, rgba(7,87,213,.08), transparent 50%); }
+    .hero-content { max-width: 750px; margin: auto; }
+    .badge { display: inline-block; padding: 7px 14px; background: #e0f2fe; color: var(--blue); border-radius: 50px; font-size: 14px; font-weight: 700; margin-bottom: 20px; }
+    .hero h1 { font-size: clamp(34px, 5vw, 52px); line-height: 1.2; margin-bottom: 20px; }
+    .gradient-text { background: linear-gradient(90deg, var(--blue), var(--green)); -webkit-background-clip: text; color: transparent; }
+    
+    .search-section { margin-top: -30px; position: relative; z-index: 5; }
+    .search-box { background: white; padding: 18px 25px; border-radius: 20px; box-shadow: 0 15px 40px rgba(15,23,42,.08); display: flex; gap: 12px; align-items: center; max-width: 700px; margin: auto; border: 1px solid #e2e8f0; }
+    .search-box input { width: 100%; border: none; outline: none; font-size: 16px; }
+
+    section { padding: 60px 0; }
+    .section-title { text-align: center; margin-bottom: 40px; }
+    .section-title h2 { font-size: 32px; margin-bottom: 8px; }
+    .section-title p { color: var(--gray); }
+
+    .products { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+    .product { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; transition: .25s; display: flex; flex-direction: column; justify-content: space-between; }
+    .product:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(15,23,42,.10); }
+    .product-image { height: 210px; background: #eef4ff; display: grid; place-items: center; overflow: hidden; }
+    .product-image img { width: 100%; height: 100%; object-fit: cover; }
+    .product-info { padding: 20px; }
+    .brand { color: var(--blue); font-size: 12px; font-weight: 800; text-transform: uppercase; }
+    .product h3 { margin: 6px 0; font-size: 18px; }
+    .spec { color: var(--gray); font-size: 13px; }
+    .price { font-size: 20px; font-weight: 800; margin: 12px 0; color: #059669; }
+
+    /* Team Section */
+    .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+    .team-card { background: white; border-radius: 20px; padding: 25px; text-align: center; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.03); }
+    .team-avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; margin: 0 auto 15px auto; border: 3px solid var(--blue); }
+    .team-card h3 { font-size: 18px; margin-bottom: 5px; }
+    .team-role { color: var(--blue); font-size: 14px; font-weight: 700; margin-bottom: 15px; }
+    .social-links { display: flex; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+    .social-btn { padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; background: #f1f5f9; color: var(--dark); display: inline-flex; align-items: center; gap: 5px; }
+    .social-btn:hover { background: var(--blue); color: white; }
+
+    /* Cart Drawer */
+    #cart-modal { position: fixed; top: 0; right: -420px; width: 400px; height: 100%; background: white; box-shadow: -10px 0 30px rgba(0,0,0,0.15); z-index: 1000; transition: .3s ease; display: flex; flex-direction: column; }
+    #cart-modal.active { right: 0; }
+    .cart-header { padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+    .cart-body { padding: 20px; flex-grow: 1; overflow-y: auto; }
+    .cart-footer { padding: 20px; border-top: 1px solid #e2e8f0; background: #f8fafc; }
+    .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+
+    /* Checkout Modal Overlay */
+    #checkout-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1100; place-items: center; backdrop-filter: blur(5px); }
+    .checkout-box { background: white; width: min(450px, 92%); max-height: 90vh; overflow-y: auto; padding: 30px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+    
+    @media (max-width: 800px) {
+      .products { grid-template-columns: repeat(2, 1fr); }
+      .team-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 500px) {
+      .products { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans">
+<body>
 
-    <!-- Header / Navbar -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-indigo-600">MobiStore</h1>
-            <nav class="space-x-6 hidden md:block">
-                <a href="#home" class="hover:text-indigo-600 font-medium">Home</a>
-                <a href="#products" class="hover:text-indigo-600 font-medium">Smartphones</a>
-                <a href="#contact" class="hover:text-indigo-600 font-medium">Contact</a>
-            </nav>
-            <div>
-                <button onclick="toggleAdmin()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">Admin Panel</button>
-            </div>
-        </div>
-    </header>
+  <!-- Header -->
+  <header>
+    <div class="container nav">
+      <a href="#" class="logo">
+        <span class="logo-mark">PK</span>
+        <span>PK Gadget</span>
+      </a>
+      <nav>
+        <a href="#home">Home</a>
+        <a href="#products">Mobiles</a>
+        <a href="#about">About Us</a>
+      </nav>
+      <div>
+        <button onclick="toggleCart()" class="btn btn-blue" style="padding: 9px 16px; position: relative;">
+          🛒 Cart <span id="cart-count" style="background: #ef4444; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; margin-left: 5px;">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
 
-    <!-- Hero Section -->
-    <section id="home" class="bg-gradient-to-r from-indigo-900 to-purple-900 text-white py-16">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div>
-                <span class="bg-indigo-500/30 text-indigo-200 text-xs px-3 py-1 rounded-full uppercase tracking-wider">Latest Tech, Best Prices</span>
-                <h2 class="text-4xl md:text-5xl font-extrabold mt-4 mb-4">Upgrade Your World</h2>
-                <p class="text-gray-300 mb-6">Discover the latest smartphones and accessories from top brands at unbeatable prices.</p>
-                <a href="#products" class="bg-white text-indigo-900 font-semibold px-6 py-3 rounded-lg shadow hover:bg-gray-100 transition">Shop Now</a>
-            </div>
-            <div class="flex justify-center">
-                <div class="bg-white/10 p-6 rounded-2xl backdrop-blur-md border border-white/20 text-center">
-                    <h3 class="text-xl font-bold mb-2">iPhone 15 Pro Max</h3>
-                    <p class="text-indigo-200 text-sm mb-4">Titanium. So strong. So light. So Pro.</p>
-                    <span class="text-2xl font-extrabold text-green-400">$1199</span>
-                </div>
-            </div>
+  <!-- Cart Drawer -->
+  <div id="cart-modal">
+    <div class="cart-header">
+      <h3 style="font-size: 18px;">🛒 আপনার কার্ট (Cart)</h3>
+      <button onclick="toggleCart()" style="border: none; background: none; font-size: 18px; cursor: pointer;">✕</button>
+    </div>
+    <div class="cart-body" id="cart-items-container">
+      <p style="color: var(--gray); text-align: center; margin-top: 40px;">কার্ট খালি রয়েছে</p>
+    </div>
+    <div class="cart-footer">
+      <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 18px; margin-bottom: 15px;">
+        <span>Subtotal:</span>
+        <span id="cart-subtotal" style="color: #059669;">৳0</span>
+      </div>
+      <button onclick="openCheckout()" class="btn btn-green" style="width: 100%;">অর্ডার কনফার্ম করুন (Checkout)</button>
+    </div>
+  </div>
+
+  <!-- Customer Details & Payment Modal -->
+  <div id="checkout-modal">
+    <div class="checkout-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="font-size: 20px; color: var(--blue);">📦 কাস্টমার ও পেমেন্ট তথ্য</h3>
+        <button onclick="closeCheckout()" style="border: none; background: none; font-size: 18px; cursor: pointer;">✕</button>
+      </div>
+      <form id="checkout-form" onsubmit="submitOrder(event)" style="display: flex; flex-direction: column; gap: 12px;">
+        <input type="text" id="c-name" placeholder="আপনার নাম *" required style="padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; outline: none;">
+        <input type="tel" id="c-phone" placeholder="মোবাইল নাম্বার *" required style="padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; outline: none;">
+        <input type="tel" id="c-whatsapp" placeholder="হোয়াটসঅ্যাপ নাম্বার *" required style="padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; outline: none;">
+        <textarea id="c-address" placeholder="পূর্ণ ঠিকানা (রোড, বাসা, এলাকা, থানা, জেলা) *" required rows="2" style="padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; resize: none;"></textarea>
+        <input type="email" id="c-email" placeholder="ইমেইল আইডি (অপশনাল)" style="padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; outline: none;">
+        
+        <!-- Payment Method Selection -->
+        <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 5px;">
+          <label style="font-weight: 700; font-size: 14px; color: var(--dark);">পেমেন্ট মাধ্যম নির্বাচন করুন *</label>
+          <select id="c-payment" required onchange="handlePaymentChange()" style="padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; background: white;">
+            <option value="">-- পেমেন্ট মেথড বেছে নিন --</option>
+            <option value="Cash on Delivery (COD)">ক্যাশ অন ডেলিভারি (COD)</option>
+            <option value="Bkash">বিকাশ (Bkash)</option>
+            <option value="Nagad">নগদ (Nagad)</option>
+            <option value="Rocket">রকেট (Rocket)</option>
+            <option value="Bank Transfer">ব্যাংক ট্রান্সফার (Bank Transfer)</option>
+          </select>
         </div>
+
+        <!-- Dynamic Payment Instructions & TrxID -->
+        <div id="payment-instructions" style="display: none; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px; border-radius: 10px; font-size: 13px; color: #166534;">
+          <p id="pay-msg" style="font-weight: 600; margin-bottom: 6px;"></p>
+          <input type="text" id="c-trxid" placeholder="ট্রানজেকশন আইডি (TrxID) লিখুন *" style="width: 100%; padding: 10px; border: 1px solid #86efac; border-radius: 8px; outline: none; background: white; color: var(--dark);">
+        </div>
+
+        <button type="submit" class="btn btn-green" style="width: 100%; margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="18" height="18"><path fill="#FFF" d="M16 0C7.163 0 0 7.163 0 16c0 2.825.735 5.475 2.02 7.775L.125 31.05l7.525-1.95A15.82 15.82 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm8.21 20.245c-.395-.198-2.335-1.153-2.697-1.284-.363-.132-.627-.198-.89.198-.263.396-1.023 1.284-1.254 1.549-.23.264-.461.297-.856.099-.395-.198-1.668-.614-3.179-1.96-1.175-1.047-1.967-2.339-2.198-2.734-.23-.395-.025-.609.174-.805.178-.178.395-.462.593-.693.198-.231.264-.396.396-.66.132-.264.066-.495-.033-.693-.099-.198-.89-2.143-1.221-2.936-.322-.772-.651-.668-.89-.681l-.759-.013c-.264 0-.693.099-1.056.495-.363.396-1.386 1.355-1.386 3.303 0 1.948 1.419 3.832 1.618 4.096.198.264 2.793 4.266 6.772 5.981.946.408 1.684.652 2.261.835.952.303 1.819.26 2.502.158.762-.113 2.335-.954 2.665-1.875.33-.921.33-1.71.231-1.875-.099-.165-.363-.264-.758-.462z"/></svg>
+          WhatsApp-এ অর্ডার পাঠান
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <main id="home">
+    <!-- Minimal Hero -->
+    <section class="hero" id="home">
+      <div class="container hero-content">
+        <span class="badge">📱 Trusted Mobile Shop</span>
+        <h1>আপনার পছন্দের <span class="gradient-text">Smartphone</span> এখন এক ছাদের নিচে</h1>
+        <p style="color: var(--gray); margin-bottom: 10px; font-size: 17px;">Samsung, Xiaomi, Vivo, Oppo, Realme এবং iPhone — আপনার পছন্দের সেরা মোবাইলটি খুঁজে নিন সাশ্রয়ী মূল্যে।</p>
+      </div>
     </section>
 
-    <!-- Main Content / Product Listing & Admin Panel -->
-    <main class="max-w-7xl mx-auto px-4 py-12">
+    <!-- Search -->
+    <div class="container search-section">
+      <div class="search-box">
+        <span>🔎</span>
+        <input type="text" id="search-input" placeholder="মডেল বা ব্রান্ডের নাম দিয়ে সার্চ করুন..." onkeyup="filterProducts()">
+      </div>
+    </div>
 
-        <!-- Customer View: Products -->
-        <div id="customer-view">
-            <h3 class="text-2xl font-bold mb-6 text-gray-900">Featured Products</h3>
-            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- Products will be loaded dynamically from Supabase -->
-                <p class="text-gray-500">Loading products...</p>
+    <!-- Products -->
+    <section id="products">
+      <div class="container">
+        <div class="section-title">
+          <h2>Featured Mobiles</h2>
+          <p>জনপ্রিয় কিছু স্মার্টফোন</p>
+        </div>
+        <div id="product-grid" class="products">
+          <p style="color: var(--gray);">প্রোডাক্ট লোড হচ্ছে...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Us / Team Section -->
+    <section id="about" style="background: #edf2f7;">
+      <div class="container">
+        <div class="section-title">
+          <h2>আমাদের টিম (About Us)</h2>
+          <p>যারা আপনাদের আস্থার সেবা দিয়ে যাচ্ছেন</p>
+        </div>
+        <div class="team-grid">
+          <!-- Owner -->
+          <div class="team-card">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300" alt="Owner" class="team-avatar">
+            <h3>মোঃ রহিম উদ্দিন</h3>
+            <div class="team-role">দোকানের মালিক (Owner)</div>
+            <p style="font-size: 13px; color: var(--gray); margin-bottom: 10px;">📞 01700-000000</p>
+            <div class="social-links">
+              <a href="https://wa.me/8801875066601" target="_blank" class="social-btn">💬 WhatsApp</a>
+              <a href="https://facebook.com" target="_blank" class="social-btn">📘 Facebook</a>
             </div>
+          </div>
+
+          <!-- Manager -->
+          <div class="team-card">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300" alt="Manager" class="team-avatar">
+            <h3>জাকির হোসেন</h3>
+            <div class="team-role">পরিচালক / ম্যানেজার</div>
+            <p style="font-size: 13px; color: var(--gray); margin-bottom: 10px;">📞 01800-000000</p>
+            <div class="social-links">
+              <a href="https://wa.me/8801875066601" target="_blank" class="social-btn">💬 WhatsApp</a>
+              <a href="https://tiktok.com" target="_blank" class="social-btn">🎵 TikTok</a>
+            </div>
+          </div>
+
+          <!-- Technician -->
+          <div class="team-card">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300" alt="Technician" class="team-avatar">
+            <h3>ইঞ্জিনিয়ার আরিফ</h3>
+            <div class="team-role">প্রধান টেকনিশিয়ান</div>
+            <p style="font-size: 13px; color: var(--gray); margin-bottom: 10px;">📞 01900-000000</p>
+            <div class="social-links">
+              <a href="https://wa.me/8801875066601" target="_blank" class="social-btn">💬 WhatsApp</a>
+              <a href="https://t.me/username" target="_blank" class="social-btn">✈️ Telegram</a>
+            </div>
+          </div>
         </div>
+      </div>
+    </section>
 
-        <!-- Admin View (Hidden by default) -->
-        <div id="admin-view" class="hidden bg-white p-6 rounded-xl shadow-md border border-gray-100">
-            <h3 class="text-2xl font-bold mb-6 text-indigo-600">Admin Dashboard - Upload Product</h3>
-            <form id="product-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" id="p-name" placeholder="Product Name" required class="border p-3 rounded-lg">
-                <input type="text" id="p-category" placeholder="Category (e.g. Smartphones)" required class="border p-3 rounded-lg">
-                <input type="number" id="p-price" placeholder="Price ($)" required class="border p-3 rounded-lg">
-                <input type="text" id="p-image" placeholder="Image URL" required class="border p-3 rounded-lg">
-                <textarea id="p-desc" placeholder="Product Description" class="border p-3 rounded-lg md:col-span-2"></textarea>
-                <button type="submit" class="bg-indigo-600 text-white py-3 rounded-lg md:col-span-2 hover:bg-indigo-700 font-medium">Add Product</button>
-            </form>
+    <!-- Contact Footer Section -->
+    <section id="contact">
+      <div class="container">
+        <div style="background: var(--dark); color: white; border-radius: 25px; padding: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center;">
+          <div>
+            <h2>আমাদের সাথে যোগাযোগ করুন</h2>
+            <p style="color: #cbd5e1; margin: 10px 0;">আপনার পছন্দের মোবাইল সম্পর্কে জানতে সরাসরি যোগাযোগ করুন।</p>
+            <p style="color: #cbd5e1; font-size: 14px;">📍 খোয়াজ আলী মেম্বার মার্কেট (২য় তলা), দক্ষিণ পাশে, দোকান নং ২৩৫-২৩৬, ব্রাহ্মণপাড়া, কুমিল্লা।</p>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="tel:01875066601" class="btn btn-blue">📞 Call Now</a>
+            <a href="https://wa.me/8801875066601" class="btn btn-green" target="_blank" style="display: inline-flex; align-items: center; gap: 6px;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="18" height="18"><path fill="#FFF" d="M16 0C7.163 0 0 7.163 0 16c0 2.825.735 5.475 2.02 7.775L.125 31.05l7.525-1.95A15.82 15.82 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm8.21 20.245c-.395-.198-2.335-1.153-2.697-1.284-.363-.132-.627-.198-.89.198-.263.396-1.023 1.284-1.254 1.549-.23.264-.461.297-.856.099-.395-.198-1.668-.614-3.179-1.96-1.175-1.047-1.967-2.339-2.198-2.734-.23-.395-.025-.609.174-.805.178-.178.395-.462.593-.693.198-.231.264-.396.396-.66.132-.264.066-.495-.033-.693-.099-.198-.89-2.143-1.221-2.936-.322-.772-.651-.668-.89-.681l-.759-.013c-.264 0-.693.099-1.056.495-.363.396-1.386 1.355-1.386 3.303 0 1.948 1.419 3.832 1.618 4.096.198.264 2.793 4.266 6.772 5.981.946.408 1.684.652 2.261.835.952.303 1.819.26 2.502.158.762-.113 2.335-.954 2.665-1.875.33-.921.33-1.71.231-1.875-.099-.165-.363-.264-.758-.462z"/></svg>
+              WhatsApp
+            </a>
+          </div>
         </div>
+      </div>
+    </section>
+  </main>
 
-    </main>
+  <footer>
+    <div class="container" style="padding: 20px 0; text-align: center; color: var(--gray); font-size: 14px;">
+      <span>© 2026 PK Gadget. All Rights Reserved.</span>
+    </div>
+  </footer>
 
-    <!-- Footer -->
-    <footer id="contact" class="bg-gray-900 text-white py-8 mt-16">
-        <div class="max-w-7xl mx-auto px-4 text-center text-sm text-gray-400">
-            <p>&copy; 2026 MobiStore. All Rights Reserved.</p>
-        </div>
-    </footer>
+  <!-- Script -->
+  <script>
+    const SUPABASE_URL = "https://cnyaflnohtzxrapjqcsm.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_6uzNl_eJXQ_01G4BomqagA_uSLVk_vI";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    <!-- Supabase Logic Script -->
-    <script>
-        const SUPABASE_URL = "https://cnyaflnohtzxrapjqcsm.supabase.co";
-        const SUPABASE_KEY = "sb_publishable_6uzNl_eJXQ_01G4BomqagA_uSLVk_vI";
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let allProducts = [];
+    let cart = [];
+    const OWNER_WHATSAPP = "8801875066601"; // আপনার পেমেন্ট ও যোগাযোগের নাম্বার
 
-        // Toggle Admin Panel
-        function toggleAdmin() {
-            const adminView = document.getElementById('admin-view');
-            const customerView = document.getElementById('customer-view');
-            adminView.classList.toggle('hidden');
-            customerView.classList.toggle('hidden');
-        }
+    function toggleCart() {
+      document.getElementById('cart-modal').classList.toggle('active');
+    }
 
-        // Fetch Products from Supabase
-        async function fetchProducts() {
-            const grid = document.getElementById('product-grid');
-            const { data, error } = await supabaseClient.from('products').select('*');
+    function openCheckout() {
+      if (cart.length === 0) {
+        alert('আপনার কার্ট খালি!');
+        return;
+      }
+      toggleCart();
+      document.getElementById('checkout-modal').style.display = 'grid';
+    }
 
-            if (error) {
-                grid.innerHTML = `<p class="text-red-500">Error loading products.</p>`;
-                return;
-            }
+    function closeCheckout() {
+      document.getElementById('checkout-modal').style.display = 'none';
+    }
 
-            if (data.length === 0) {
-                grid.innerHTML = `<p class="text-gray-500">No products found. Use Admin Panel to add products.</p>`;
-                return;
-            }
+    function handlePaymentChange() {
+      const payment = document.getElementById('c-payment').value;
+      const box = document.getElementById('payment-instructions');
+      const msg = document.getElementById('pay-msg');
+      const trxInput = document.getElementById('c-trxid');
 
-            grid.innerHTML = '';
-            data.forEach(product => {
-                grid.innerHTML += `
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                        <div>
-                            <img src="${product.image_url}" alt="${product.name}" class="h-48 w-full object-cover rounded-lg mb-4">
-                            <span class="text-xs text-indigo-600 font-semibold uppercase">${product.category}</span>
-                            <h4 class="font-bold text-lg mt-1">${product.name}</h4>
-                            <p class="text-gray-600 text-sm mt-1">${product.description || ''}</p>
-                        </div>
-                        <div class="mt-4 flex justify-between items-center">
-                            <span class="text-xl font-bold text-green-600">$${product.price}</span>
-                            <button onclick="alert('Order feature connected!')" class="bg-gray-900 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-gray-800">Buy Now</button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
+      if (payment === 'Bkash' || payment === 'Nagad' || payment === 'Rocket') {
+        box.style.display = 'block';
+        msg.innerText = `দয়া করে নিচের নাম্বারে (Personal) সেন্ড মানি করুন:\n📞 01875066601 (${payment})`;
+        trxInput.required = true;
+      } else {
+        box.style.display = 'none';
+        trxInput.required = false;
+        trxInput.value = '';
+      }
+    }
 
-        // Handle Product Submission from Admin Panel
-        document.getElementById('product-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('p-name').value;
-            const category = document.getElementById('p-category').value;
-            const price = parseFloat(document.getElementById('p-price').value);
-            const image_url = document.getElementById('p-image').value;
-            const description = document.getElementById('p-desc').value;
+    function addToCart(name, price) {
+      const existing = cart.find(item => item.name === name);
+      if (existing) {
+        existing.qty++;
+      } else {
+        cart.push({ name, priceStr: '৳' + price.toLocaleString(), price: price, qty: 1 });
+      }
+      updateCartUI();
+      toggleCart();
+    }
 
-            const { error } = await supabaseClient.from('products').insert([{ name, category, price, image_url, description }]);
+    function updateCartUI() {
+      const container = document.getElementById('cart-items-container');
+      const countBadge = document.getElementById('cart-count');
+      const subtotalEl = document.getElementById('cart-subtotal');
 
-            if (error) {
-                alert('Failed to add product: ' + error.message);
-            } else {
-                alert('Product added successfully!');
-                document.getElementById('product-form').reset();
-                toggleAdmin();
-                fetchProducts();
-            }
-        });
+      let totalCount = 0;
+      let subtotal = 0;
 
-        // Load products on page load
-        fetchProducts();
-    </script>
+      if (cart.length === 0) {
+        container.innerHTML = `<p style="color: var(--gray); text-align: center; margin-top: 40px;">কার্ট খালি রয়েছে</p>`;
+        subtotalEl.innerText = `৳0`;
+        countBadge.innerText = `0`;
+        return;
+      }
+
+      container.innerHTML = '';
+      cart.forEach((item, index) => {
+        totalCount += item.qty;
+        subtotal += item.price * item.qty;
+        container.innerHTML += `
+          <div class="cart-item">
+            <div>
+              <strong>${item.name}</strong><br>
+              <span style="color: var(--gray);">${item.priceStr} × ${item.qty}</span>
+            </div>
+            <div>
+              <button onclick="changeQty(${index}, 1)" style="padding: 2px 6px; cursor: pointer;">+</button>
+              <span style="margin: 0 5px;">${item.qty}</span>
+              <button onclick="changeQty(${index}, -1)" style="padding: 2px 6px; cursor: pointer;">-</button>
+            </div>
+          </div>
+        `;
+      });
+
+      countBadge.innerText = totalCount;
+      subtotalEl.innerText = `৳` + subtotal.toLocaleString();
+    }
+
+    function changeQty(index, delta) {
+      cart[index].qty += delta;
+      if (cart[index].qty <= 0) {
+        cart.splice(index, 1);
+      }
+      updateCartUI();
+    }
+
+    function submitOrder(e) {
+      e.preventDefault();
+      const name = document.getElementById('c-name').value;
+      const phone = document.getElementById('c-phone').value;
+      const whatsapp = document.getElementById('c-whatsapp').value;
+      const address = document.getElementById('c-address').value;
+      const email = document.getElementById('c-email').value || 'প্রদান করা হয়নি';
+      const payment = document.getElementById('c-payment').value;
+      const trxid = document.getElementById('c-trxid').value || 'প্রযোজ্য নয় (COD)';
+
+      let text = `🛒 নতুন অর্ডার কনফার্মেশন!\n\n`;
+      text += `👤 নাম: ${name}\n`;
+      text += `📞 মোবাইল: ${phone}\n`;
+      text += `💬 হোয়াটসঅ্যাপ: ${whatsapp}\n`;
+      text += `📍 ঠিকানা: ${address}\n`;
+      text += `✉️ ইমেইল: ${email}\n`;
+      text += `💳 পেমেন্ট মাধ্যম: ${payment}\n`;
+      if(payment === 'Bkash' || payment === 'Nagad' || payment === 'Rocket') {
+        text += `🔑 ট্রানজেকশন আইডি (TrxID): ${trxid}\n`;
+      }
+      text += `\n📦 প্রোডাক্টের তালিকা:\n`;
+
+      let subtotal = 0;
+      cart.forEach(item => {
+        text += `- ${item.name} (${item.priceStr}) x ${item.qty}\n`;
+        subtotal += item.price * item.qty;
+      });
+      text += `\nSubtotal: ৳${subtotal.toLocaleString()}`;
+
+      const url = `https://wa.me/${OWNER_WHATSAPP}?text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank');
+      closeCheckout();
+    }
+
+    async function fetchProducts() {
+      const grid = document.getElementById('product-grid');
+      const { data, error } = await supabaseClient.from('products').select('*');
+
+      if (error) {
+        grid.innerHTML = `<p style="color:red;">ডেটা লোড করতে সমস্যা হয়েছে।</p>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        grid.innerHTML = `<p style="color:var(--gray);">কোনো প্রোডাক্ট পাওয়া যায়নি।</p>`;
+        return;
+      }
+
+      allProducts = data;
+      displayProducts(allProducts);
+    }
+
+    function displayProducts(products) {
+      const grid = document.getElementById('product-grid');
+      grid.innerHTML = '';
+
+      products.forEach(p => {
+        const formattedPrice = Number(p.price).toLocaleString();
+        grid.innerHTML += `
+          <article class="product">
+            <div class="product-image">
+              ${p.image_url && p.image_url.startsWith('http') ? `<img src="${p.image_url}" alt="${p.name}">` : '📱'}
+            </div>
+            <div class="product-info">
+              <div class="brand">${p.brand || p.category || 'PK Gadget'}</div>
+              <h3>${p.name}</h3>
+              <div class="spec">${p.description || ''}</div>
+              <div class="price">৳${formattedPrice}</div>
+              <div style="display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 15px;">
+                <button onclick="addToCart('${p.name.replace(/'/g, "\\'")}', ${p.price})" class="btn btn-blue" style="font-size: 14px; padding: 10px; width: 100%;">🛒 Add to Cart</button>
+              </div>
+            </div>
+          </article>
+        `;
+      });
+    }
+
+    function filterProducts() {
+      const query = document.getElementById('search-input').value.toLowerCase();
+      const filtered = allProducts.filter(p => 
+        p.name.toLowerCase().includes(query) || (p.brand && p.brand.toLowerCase().includes(query)) || (p.category && p.category.toLowerCase().includes(query))
+      );
+      displayProducts(filtered);
+    }
+
+    fetchProducts();
+  </script>
 </body>
 </html>
